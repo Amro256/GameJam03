@@ -6,10 +6,21 @@ using TMPro;
 
 public class NewBehaviourScript : MonoBehaviour
 {
-    [SerializeField] GameObject[] Potions; //An array to hold all of the Potions sprites     
+    
+    [Header("Array")]
+    [SerializeField] GameObject[] Potions; //An array to hold all of the Potions sprites   
+    [SerializeField] GameObject[] Recipies; //An array to hold all of the possible recipies  
 
-    [SerializeField] Image canvasImage; //Refernece to the Image component of the canvas -- Make this Private after testing)
 
+    [Header("UI Image slots")]
+    [SerializeField] Image PotionImage; //Refernece to the Image component of the canvas -- Make this Private after testing)
+    [SerializeField] RawImage Recipe1Image;
+    [SerializeField] RawImage Reciep2Image;
+    [SerializeField] RawImage Recipe3Image;
+    [SerializeField] RawImage Recipe4Image;
+
+
+    [Header("Time settings")]
     [SerializeField] TMP_Text timerText;
     [SerializeField] float timeLeft = 20f;
     private bool isTimerRunning = false;
@@ -40,6 +51,8 @@ public class NewBehaviourScript : MonoBehaviour
             }
         }
     }
+
+    private List<GameObject> correctRecipes = new List<GameObject>();
     
     private void randomItem()
     {
@@ -54,12 +67,41 @@ public class NewBehaviourScript : MonoBehaviour
         int randomPostion = Random.Range(0, Potions.Length); 
         GameObject selectedPotion = Potions[randomPostion];
 
-        SpriteRenderer sr = selectedPotion.GetComponent<SpriteRenderer>();
+        SpriteRenderer potionSR = selectedPotion.GetComponent<SpriteRenderer>();
 
-        if(sr != null) //If the sprite renderer is not null, show the selected potion sprite
+        if(potionSR != null) //If the sprite renderer is not null, show the selected potion sprite
         {
-            canvasImage.sprite = sr.sprite;
+            PotionImage.sprite = potionSR.sprite;
         }
+
+        correctRecipes.Clear();
+
+
+        if(Recipies.Length >= 4)
+        {
+            List<GameObject> chosenRecipes = new List<GameObject>();
+
+            while(chosenRecipes.Count < 4)
+            {
+                GameObject selectedRecipe = Recipies[Random.Range(0, Recipies.Length)];
+
+                if(!chosenRecipes.Contains(selectedRecipe))
+                {
+                    chosenRecipes.Add(selectedRecipe);
+                }
+            }
+
+            correctRecipes.AddRange(chosenRecipes);
+
+            assignRecipeImage(Recipe1Image, chosenRecipes[0]);
+            assignRecipeImage(Reciep2Image, chosenRecipes[1]);
+            assignRecipeImage(Recipe3Image, chosenRecipes[2]);
+            assignRecipeImage(Recipe4Image, chosenRecipes[3]);
+
+        }
+
+
+
     }
 
     void displayTimer(float time)
@@ -68,5 +110,16 @@ public class NewBehaviourScript : MonoBehaviour
         float mileseconds = (time % 1) * 100;
 
         timerText.text = string.Format("{0:00} : {1:00}", seconds, mileseconds); 
+    }
+
+
+    private void assignRecipeImage(RawImage recipeImage, GameObject recipeObject)
+    {
+        SpriteRenderer recipeSR = recipeObject.GetComponent<SpriteRenderer>();
+
+        if(recipeSR != null)
+        {
+            recipeImage.texture = recipeSR.sprite.texture;
+        }
     }
 }
