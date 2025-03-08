@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class NewBehaviourScript : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
     
     [Header("Array")]
@@ -24,6 +24,9 @@ public class NewBehaviourScript : MonoBehaviour
     [SerializeField] TMP_Text timerText;
     [SerializeField] float timeLeft = 20f;
     private bool isTimerRunning = false;
+
+
+     private List<GameObject> correctRecipes = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -52,7 +55,7 @@ public class NewBehaviourScript : MonoBehaviour
         }
     }
 
-    private List<GameObject> correctRecipes = new List<GameObject>();
+   
     
     private void randomItem()
     {
@@ -75,11 +78,8 @@ public class NewBehaviourScript : MonoBehaviour
         }
 
         correctRecipes.Clear();
-
-
-        if(Recipies.Length >= 4)
-        {
-            List<GameObject> chosenRecipes = new List<GameObject>();
+         List<GameObject> chosenRecipes = new List<GameObject>();
+                   
 
             while(chosenRecipes.Count < 4)
             {
@@ -93,14 +93,20 @@ public class NewBehaviourScript : MonoBehaviour
 
             correctRecipes.AddRange(chosenRecipes);
 
+
+             // Debugging: log the chosen recipes
+    Debug.Log("Correct Recipes Assigned:");
+    foreach (var recipe in chosenRecipes)
+    {
+        Debug.Log(recipe.name);
+    }
+
+
             assignRecipeImage(Recipe1Image, chosenRecipes[0]);
             assignRecipeImage(Reciep2Image, chosenRecipes[1]);
             assignRecipeImage(Recipe3Image, chosenRecipes[2]);
             assignRecipeImage(Recipe4Image, chosenRecipes[3]);
-
-        }
-
-
+        
 
     }
 
@@ -120,6 +126,13 @@ public class NewBehaviourScript : MonoBehaviour
         if(recipeSR != null)
         {
             recipeImage.texture = recipeSR.sprite.texture;
+
+            Debug.Log("Assigned sprite: " + recipeSR.sprite.name + " to UI image.");
         }
     }
+
+    public List<GameObject> GetCorrectRecipes()
+{
+    return correctRecipes;
+}
 }
