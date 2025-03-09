@@ -25,6 +25,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] float timeLeft = 20f; //
     private bool isTimerRunning = false;
 
+    [Header("Other settings")]
+    [SerializeField] TMP_Text TextFeedback;
+    public Animator textAni;
+
 
     private List<GameObject> correctRecipes = new List<GameObject>();
 
@@ -97,8 +101,6 @@ public class UIManager : MonoBehaviour
             assignRecipeImage(Reciep2Image, chosenRecipes[1]);
             assignRecipeImage(Recipe3Image, chosenRecipes[2]);
             assignRecipeImage(Recipe4Image, chosenRecipes[3]);
-        
-
     }
 
     //Timer method 
@@ -119,8 +121,6 @@ public class UIManager : MonoBehaviour
         if(recipeSR != null) //Checks if the renderer is not null
         {
             recipeImage.texture = recipeSR.sprite.texture;
-
-            Debug.Log("Assigned sprite: " + recipeSR.sprite.name + " to UI image.");
         }
     }
 
@@ -135,5 +135,30 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log("Generate new potion");
         randomiseItemAndRecipe();
+    }
+
+
+    public void DisplayTextFeedback(string itemname)
+    {
+        TextFeedback.color = Color.green;
+        TextFeedback.text = itemname + " dropped";
+        textAni.SetTrigger("FadeIn");
+
+        StartCoroutine(HideTextFeedback());
+    }
+
+    public void DisplayPotionFeedback(string message)
+    {
+        TextFeedback.text = message;
+        TextFeedback.color = Color.red;
+        textAni.SetTrigger("FadeIn");
+
+        StartCoroutine(HideTextFeedback());
+    }
+
+    private IEnumerator HideTextFeedback()
+    {
+        yield return new WaitForSeconds(0.25f);
+        textAni.SetTrigger("FadeOut");
     }
 }

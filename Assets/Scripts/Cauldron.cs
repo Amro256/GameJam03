@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+
 public class Cauldron : MonoBehaviour
 {
 
     private List<GameObject> droppedRecipes = new List<GameObject>(); //Creating a list for the dropped recipies (items)
     private UIManager UImanager; //Reference to the UI manager script
-
+    [SerializeField] private AudioClip itemSFX; //Audio clip that will play when an item is dropped
+    [SerializeField] private AudioClip PotionCreatedSFX; //Audio clip that will play when an item is dropped
 
     void Start()
     {
@@ -24,14 +26,20 @@ public class Cauldron : MonoBehaviour
             if(other.gameObject != null)
             {
             droppedRecipes.Add(other.gameObject); //Adds the items dropped to the list created earlier
-            Debug.Log("Dropped " + other.gameObject.name);
-            //Destroy(other.gameObject);
 
-            if(droppedRecipes.Count == 4) //Checks if the dropped items are exactly 4
+            //Play soundeffect
+
+            AudioManager.instance.playSFX(itemSFX, transform, 0.3f);
+            Destroy(other.gameObject);
+            
+            //Debug.Log("Dropped " + other.gameObject.name);
+            
+            UImanager.DisplayTextFeedback(other.gameObject.name);
+
+            if(droppedRecipes.Count  == UImanager.GetCorrectRecipe().Count) //Checks if the dropped items are exactly 4
             {
                 
                 checkRecipes(); //If it is then call the Check Recipes method
-                
             }  
             }  
         }
@@ -43,15 +51,7 @@ public class Cauldron : MonoBehaviour
     {
        List<GameObject> correctRecipes = UImanager.GetCorrectRecipe(); //Calls the get correct recipe method from the UI manager script
 
-
-    //    // Debugging: log the correct recipes and their sprites
-    // Debug.Log("Correct Recipes:");
-    // foreach (var recipe in correctRecipes)
-    // {
-    //     Debug.Log(recipe.name + " Sprite: " + recipe.GetComponent<SpriteRenderer>().sprite.name);
-    // }
-
-       if(correctRecipes.Count == 4 && droppedRecipes.Count == 4) //Checks to see if the correct recipes and the dropped items match 
+       if(correctRecipes.Count == droppedRecipes.Count) //Checks to see if the correct recipes and the dropped items match 
        {
          //Create a bool that will check if they are both matching
          bool ismatch = true;
@@ -63,7 +63,9 @@ public class Cauldron : MonoBehaviour
             GameObject correctRecipe = correctRecipes[i];
             GameObject droppedRecipe = droppedRecipes[i];
             
-            //Comparing the sprites of each and checking to see if they match
+            if(correctRecipe != null && droppedRecipe != null)
+            {
+                    //Comparing the sprites of each and checking to see if they match
             Sprite correctSprite = correctRecipe.GetComponent<SpriteRenderer>().sprite;
             Sprite droppedSprite = droppedRecipe.GetComponent<SpriteRenderer>().sprite;
 
@@ -72,12 +74,17 @@ public class Cauldron : MonoBehaviour
                 ismatch = false;
                 break;
             }
+            }
+           
          }
-
 
          if(ismatch)
          {
             Debug.Log("Potion Created");
+
+            UImanager.DisplayPotionFeedback("Potion generated! ");
+
+            AudioManager.instance.playSFX(PotionCreatedSFX, transform, 0.09f);
 
             droppedRecipes.Clear();
 
@@ -86,6 +93,9 @@ public class Cauldron : MonoBehaviour
          else
          {
             Debug.Log("Wrong ingredients! Try again!");
+
+            UImanager.DisplayPotionFeedback("Wrong ingredients!");
+            droppedRecipes.Clear();
          }
 
        }
