@@ -54,6 +54,7 @@ public class UIManager : MonoBehaviour
             {
                 Debug.Log("You failed!");
                 timeLeft = 0f;
+                GameManager.instance.TimeOverScreen();
                 isTimerRunning = false;
             }
         }
