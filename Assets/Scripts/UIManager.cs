@@ -7,7 +7,7 @@ using TMPro;
 public class UIManager : MonoBehaviour
 {
     
-    [Header("Array")]
+    [Header("Arrays")]
     [SerializeField] GameObject[] Potions; //An array to hold all of the Potions sprites   
     [SerializeField] GameObject[] Recipies; //An array to hold all of the possible recipies  
 
@@ -22,23 +22,23 @@ public class UIManager : MonoBehaviour
 
     [Header("Time settings")]
     [SerializeField] TMP_Text timerText;
-    [SerializeField] float timeLeft = 20f;
+    [SerializeField] float timeLeft = 20f; //
     private bool isTimerRunning = false;
 
 
-     private List<GameObject> correctRecipes = new List<GameObject>();
+    private List<GameObject> correctRecipes = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
     {
         //Method here that will randomise the final item
-        randomItem();
-        isTimerRunning = true;
+        randomiseItemAndRecipe();
+        isTimerRunning = true; //Set the timer is running to true once the game starts
     }
 
-    // Update is called once per frame
     void Update()
     {
+        //Timer code
         if(isTimerRunning)
         {
             if(timeLeft > 0)
@@ -55,9 +55,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
-   
-    
-    private void randomItem()
+
+    //Method to randmoise the Item and Recipes and display correctly in the UI
+    private void randomiseItemAndRecipe()
     {
         //Null check
         if(Potions.Length == 0)
@@ -78,14 +78,13 @@ public class UIManager : MonoBehaviour
         }
 
         correctRecipes.Clear();
-         List<GameObject> chosenRecipes = new List<GameObject>();
+        List<GameObject> chosenRecipes = new List<GameObject>();
                    
-
             while(chosenRecipes.Count < 4)
             {
                 GameObject selectedRecipe = Recipies[Random.Range(0, Recipies.Length)];
 
-                if(!chosenRecipes.Contains(selectedRecipe))
+                if(!chosenRecipes.Contains(selectedRecipe)) //Avoid duplicates
                 {
                     chosenRecipes.Add(selectedRecipe);
                 }
@@ -93,15 +92,7 @@ public class UIManager : MonoBehaviour
 
             correctRecipes.AddRange(chosenRecipes);
 
-
-             // Debugging: log the chosen recipes
-    Debug.Log("Correct Recipes Assigned:");
-    foreach (var recipe in chosenRecipes)
-    {
-        Debug.Log(recipe.name);
-    }
-
-
+            //Assigned each recipe image with the choosen 4 recipes
             assignRecipeImage(Recipe1Image, chosenRecipes[0]);
             assignRecipeImage(Reciep2Image, chosenRecipes[1]);
             assignRecipeImage(Recipe3Image, chosenRecipes[2]);
@@ -110,6 +101,7 @@ public class UIManager : MonoBehaviour
 
     }
 
+    //Timer method 
     void displayTimer(float time)
     {
         float seconds = Mathf.FloorToInt(time % 60);
@@ -119,11 +111,12 @@ public class UIManager : MonoBehaviour
     }
 
 
+    // Method that will assign the recipie images to the UI element in Game
     private void assignRecipeImage(RawImage recipeImage, GameObject recipeObject)
     {
         SpriteRenderer recipeSR = recipeObject.GetComponent<SpriteRenderer>();
 
-        if(recipeSR != null)
+        if(recipeSR != null) //Checks if the renderer is not null
         {
             recipeImage.texture = recipeSR.sprite.texture;
 
@@ -131,8 +124,16 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public List<GameObject> GetCorrectRecipes()
-{
-    return correctRecipes;
-}
+
+    //Method that will return the correct recipes
+    public List<GameObject> GetCorrectRecipe()
+    {
+        return correctRecipes;
+    }
+
+    public void GenerateNewPotion()
+    {
+        Debug.Log("Generate new potion");
+        randomiseItemAndRecipe();
+    }
 }
